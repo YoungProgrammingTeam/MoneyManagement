@@ -13,6 +13,10 @@ from rest_framework.authentication import SessionAuthentication, BasicAuthentica
 from money_management.users.models import User, Expense, Transaction, ExpenseAnalytics
 from django.http import Http404
 from .serializers import UserSerializer
+from .list_stocks_tickers import stocks_data
+from .list_coins_tickers import coins_data
+import requests
+
 
 
 
@@ -80,3 +84,45 @@ def get_data_for_user(request, user_id):
         'expenseAnalytics': list(expense_analytics),
     }
     return Response(data)
+
+
+@api_view(['GET'])
+def get_crypto_currency(request, symbol):
+    try:
+        url = f'https://www.binance.com/api/v3/ticker/price?symbol={symbol.upper()}'
+        response = requests.get(url).json() 
+        return Response(response)
+    except Exception as e:
+        return Response(e)
+
+
+@api_view(['GET'])
+def get_stock_currency(request, symbol):
+    try:
+        url = f"https://api.polygon.io/v2/aggs/ticker/{symbol.upper()}/prev?adjusted=true&apiKey=EH2vpdYrp_dt3NHfcTjPhu0JOKKw0Lwz"
+        response = requests.get(url).json()
+        data = {
+            'symbol': symbol.upper(),
+            'price': response['results'][0]['o']
+        }
+        return Response(data)
+    except Exception as e:
+        raise Http404("Symbol invalid")
+
+
+@api_view(['GET'])
+def get_stock_list(request):
+    try:
+        return Response(stocks_data)
+    except Exception as e:
+        raise Http404(e)
+
+
+@api_view(['GET'])
+def get_crypto_currency_list(request):
+    try:
+        return Response(coins_data)
+    except Exception as e:
+        raise Http404(e)
+    
+    

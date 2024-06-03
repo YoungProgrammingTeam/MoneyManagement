@@ -10,7 +10,7 @@ from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
-from money_management.users.api.views import get_data, get_data_for_user
+from money_management.users.api.views import get_data, get_data_for_user, get_crypto_currency, get_stock_currency, get_stock_list, get_crypto_currency_list
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
@@ -29,6 +29,10 @@ urlpatterns = [
     # Media files
     path('api/data/', get_data, name='get_data'),
     path('api/data/<int:user_id>/', get_data_for_user, name='get_data_for_user'),
+    path('api/get_cryptocurrency/<str:symbol>/', get_crypto_currency, name='get_crypto_currency'),
+    path('api/get_stockcurrency/<str:symbol>/', get_stock_currency, name='get_stock_currency'),
+    path('api/get_stock_list/', get_stock_list, name='get_stock_list'),
+    path('api/get_cryptocurrency_list/', get_crypto_currency_list, name='get_crypto_currency_list'),
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
 if settings.DEBUG:
