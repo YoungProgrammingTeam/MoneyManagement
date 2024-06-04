@@ -10,7 +10,23 @@ from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView
 from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework.authtoken.views import obtain_auth_token
-from money_management.users.api.views import get_data, get_data_for_user, get_crypto_currency, get_stock_currency, get_stock_list, get_crypto_currency_list
+from money_management.users.api.views import get_data, get_data_for_user, get_crypto_currency, get_stock_currency, get_stock_list, get_crypto_currency_list, register_user
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Your API",
+        default_version='v1',
+        description="API documentation",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@yourdomain.com"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 
 urlpatterns = [
     path("", TemplateView.as_view(template_name="pages/home.html"), name="home"),
@@ -33,6 +49,7 @@ urlpatterns = [
     path('api/get_stockcurrency/<str:symbol>/', get_stock_currency, name='get_stock_currency'),
     path('api/get_stock_list/', get_stock_list, name='get_stock_list'),
     path('api/get_cryptocurrency_list/', get_crypto_currency_list, name='get_crypto_currency_list'),
+    path('api/user_registration/', register_user, name='register_user'),
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
 if settings.DEBUG:

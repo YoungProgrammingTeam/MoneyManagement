@@ -9,14 +9,12 @@ from rest_framework.decorators import api_view, authentication_classes, permissi
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-
 from money_management.users.models import User, Expense, Transaction, ExpenseAnalytics
 from django.http import Http404
-from .serializers import UserSerializer
+from .serializers import UserSerializer, RegisterSerializer
 from .list_stocks_tickers import stocks_data
 from .list_coins_tickers import coins_data
 import requests
-
 
 
 
@@ -124,5 +122,12 @@ def get_crypto_currency_list(request):
         return Response(coins_data)
     except Exception as e:
         raise Http404(e)
-    
-    
+
+
+@api_view(['POST'])
+def register_user(request):
+    serializer = RegisterSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message": "User registered successfully"}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
